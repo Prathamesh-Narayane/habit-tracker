@@ -670,56 +670,18 @@
         }
       }
 
-      // --- NEW FUNCTION: EDIT HABIT ---
-      function editHabit(index) {
-        const oldName = state.habits[index].name;
-        const newName = prompt("Rename habit to:", oldName);
-
-        if (newName && newName !== oldName) {
-          // 1. Update the name in the habits array
-          state.habits[index].name = newName;
-
-          // 2. Migrate existing history to the new name
-          // History keys are stored as "Month-Day-HabitName"
-          Object.keys(state.history).forEach((key) => {
-            if (key.endsWith(`-${oldName}`)) {
-              const value = state.history[key];
-              // Remove the old key
-              delete state.history[key];
-              // Create the new key
-              const prefix = key.substring(0, key.lastIndexOf("-"));
-              const newKey = `${prefix}-${newName}`;
-              state.history[newKey] = value;
-            }
-          });
-
-          // 3. Save and refresh
-          save();
-          renderHabitSettings();
-          init();
-        }
-      }
-
       function removeHabit(i) {
-        if (confirm("Delete this habit and its history?")) {
-          state.habits.splice(i, 1);
-          save();
-          renderHabitSettings();
-          init();
-        }
+        state.habits.splice(i, 1);
+        save();
+        renderHabitSettings();
+        init();
       }
 
       function renderHabitSettings() {
         document.getElementById("habitList").innerHTML = state.habits
           .map(
             (h, i) =>
-              `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:5px;">
-                 <span>${h.name}</span>
-                 <div>
-                   <button onclick="editHabit(${i})" style="margin-right:5px; border:none; background:none; cursor:pointer; font-size:16px;">✏️</button>
-                   <button onclick="removeHabit(${i})" style="color:red; border:none; background:none; cursor:pointer; font-size:16px;">✕</button>
-                 </div>
-               </div>`,
+              `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--border);"><span>${h.name}</span><button onclick="removeHabit(${i})" style="color:red; border:none; background:none; cursor:pointer;">✕</button></div>`,
           )
           .join("");
       }
