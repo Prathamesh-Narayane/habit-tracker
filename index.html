@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2026 Habit Mastery Pro | MASTER</title>
+    <style>
+      :root {
+        --bg: #f1f5f9;
+        --card: #ffffff;
+        --text: #0f172a;
+        --accent: #4f46e5;
+        --border: #cbd5e1;
+        --success-bg: #dcfce7;
+        --success-border: #22c55e;
+        --success-text: #15803d;
+        --missed-bg: #fee2e2;
+        --missed-border: #ef4444;
+        --missed-text: #b91c1c;
+        --future-bg: #ffffff;
+        --info: #0ea5e9;
+        --header-bg: #1e293b;
+        --weekend-bg: #f8fafc;
+      }
+      [data-theme="dark"] {
+        --bg: #020617;
+        --card: #1e293b;
+        --text: #f8fafc;
+        --accent: #818cf8;
+        --border: #334155;
+        --success-bg: #064e3b;
+        --success-border: #10b981;
+        --success-text: #34d399;
+        --missed-bg: #450a0a;
+        --missed-border: #f43f5e;
+        --missed-text: #f87171;
+        --future-bg: #0f172a;
+        --header-bg: #000000;
+        --weekend-bg: #131c2e;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+        transition: 0.3s;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 15px;
+      }
+
+      .yearly-summary {
+        background: var(--card);
+        padding: 25px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border);
+      }
+      .yearly-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .stat-card {
+        background: var(--bg);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .month-card {
+        background: var(--card);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 50px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+
+      .week-labels {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .week-day-label {
+        background: var(--header-bg);
+        color: white;
+        padding: 10px 0;
+        border-radius: 8px;
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+      .week-day-label.weekend {
+        background: var(--accent);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 15px;
+        row-gap: 30px;
+      }
+
+      .day-cell {
+        border-radius: 14px;
+        padding: 15px;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--border);
+        background: var(--future-bg);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        position: relative;
+      }
+      .day-cell.weekend {
+        background: var(--weekend-bg);
+      }
+      .day-cell:not(.empty):hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.3);
+        border-color: var(--accent);
+        z-index: 5;
+      }
+      .day-cell.empty {
+        background: transparent;
+        border: none;
+      }
+
+      .is-complete {
+        background: var(--success-bg) !important;
+        border: 2px solid var(--success-border) !important;
+      }
+      .is-missed {
+        background: var(--missed-bg) !important;
+        border: 2px solid var(--missed-border) !important;
+      }
+      .is-today {
+        border: 3px solid var(--accent) !important;
+        box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+      }
+
+      .day-num {
+        font-weight: 900;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 5px;
+      }
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      textarea {
+        width: 100%;
+        border: none;
+        border-top: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--text);
+        font-size: 11px;
+        margin-top: auto;
+        padding: 10px;
+        resize: none;
+        border-radius: 0 0 10px 10px;
+        min-height: 50px;
+        box-sizing: border-box;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 10px;
+        background: var(--bg);
+        border-radius: 20px;
+        margin: 15px 0 25px 0;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--info));
+        width: 0%;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        font-weight: 700;
+        background: var(--card);
+        color: var(--text);
+        transition: 0.2s;
+      }
+      .btn:hover {
+        background: var(--bg);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        border: none;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        background: var(--card);
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 450px;
+        position: relative;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+      .close-x {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text);
+        opacity: 0.5;
+      }
+
+      #backupStatus {
+        font-size: 11px;
+        color: var(--info);
+        font-weight: bold;
+        margin-top: 5px;
+      }
+
+      #monthSelector {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <h1 style="margin: 0; letter-spacing: -1px">
+            2026 Habit Mastery <span style="color: var(--accent)">PRO</span>
+          </h1>
+          <p
+            id="systemDate"
+            style="opacity: 0.7; font-weight: 700; margin: 5px 0 0 0"
+          ></p>
+          <div id="backupStatus"></div>
+
+          <div style="margin-top: 10px">
+            <label style="font-size: 12px; font-weight: 800; opacity: 0.8"
+              >VIEW MONTH:</label
+            >
+            <select id="monthSelector" onchange="filterMonthView()">
+              <option value="all">Show All Year</option>
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" onclick="openSettings()">⚙️ Settings</button>
+          <button id="unlockBtn" class="btn" onclick="handleUnlock()">
+            🔓 Unlock History
+          </button>
+          <button class="btn" onclick="toggleTheme()">🌓 Theme</button>
+        </div>
+      </header>
+
+      <section class="yearly-summary" id="statsSection">
+        <h2 id="statsTitle" style="margin: 0 0 15px 0">
+          🏆 2026 Yearly Performance
+        </h2>
+        <div class="yearly-grid" id="performanceStats"></div>
+      </section>
+
+      <div id="calendarRoot"></div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+      <div class="modal-content">
+        <button class="close-x" onclick="closeSettings()">✕</button>
+        <h2 style="margin-top: 0">System Settings</h2>
+        <div style="margin-bottom: 20px">
+          <label><strong>Passcode:</strong></label>
+          <input
+            type="text"
+            id="passInput"
+            style="
+              width: 100%;
+              padding: 12px;
+              margin-top: 8px;
+              border-radius: 8px;
+              border: 1px solid var(--border);
+              box-sizing: border-box;
+            "
+          />
+        </div>
+        <div style="margin-bottom: 20px">
+          <label><strong>Data Management:</strong></label>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 10px;
+              margin-top: 10px;
+            "
+          >
+            <button class="btn" onclick="exportData()">📤 Export JSON</button>
+            <button
+              class="btn"
+              onclick="document.getElementById('importFile').click()"
+            >
+              📥 Import JSON
+            </button>
+          </div>
+          <input
+            type="file"
+            id="importFile"
+            style="display: none"
+            accept=".json"
+            onchange="importData(event)"
+          />
+        </div>
+        <div style="margin-bottom: 20px">
+          <label><strong>Habits:</strong></label>
+          <div style="display: flex; gap: 8px; margin-top: 8px">
+            <input
+              type="text"
+              id="newHabitName"
+              placeholder="New habit..."
+              style="
+                flex: 1;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                box-sizing: border-box;
+              "
+            />
+            <button class="btn btn-primary" onclick="addHabit()">Add</button>
+          </div>
+          <div
+            id="habitList"
+            style="
+              margin-top: 10px;
+              max-height: 120px;
+              overflow-y: auto;
+              border: 1px solid var(--border);
+              padding: 5px;
+              border-radius: 8px;
+            "
+          ></div>
+        </div>
+        <button
+          class="btn"
+          style="
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+          "
+          onclick="resetYear()"
+        >
+          ⚠️ RESET ALL DATA
+        </button>
+        <button
+          class="btn btn-primary"
+          style="width: 100%"
+          onclick="closeSettings()"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const TODAY = new Date(2026, 0, 29);
+      document.getElementById("systemDate").innerText = TODAY.toDateString();
+
+      let isUnlocked = false;
+      let state = JSON.parse(
+        localStorage.getItem("habitMaster_2026_MASTER"),
+      ) || {
+        habits: [{ name: "Exercise" }, { name: "Coding" }],
+        history: {},
+        passcode: "2026",
+        lastBackup: null,
+        lastBackupWeek: null,
+      };
+
+      function filterMonthView() {
+        const selected = document.getElementById("monthSelector").value;
+        const cards = document.querySelectorAll(".month-card");
+        const statsTitle = document.getElementById("statsTitle");
+
+        cards.forEach((card, index) => {
+          card.style.display =
+            selected === "all" || selected == index ? "block" : "none";
+        });
+
+        if (selected === "all") {
+          statsTitle.innerText = "🏆 2026 Yearly Performance";
+          updateYearlyStats();
+        } else {
+          statsTitle.innerText = `📊 ${months[selected]} Performance`;
+          updateMonthlyStats(selected);
+        }
+      }
+
+      function getWeekNumber(d) {
+        const date = new Date(
+          Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
+        );
+        date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+        const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+        return Math.ceil(((date - yearStart) / 86400000 + 1) / 7);
+      }
+
+      function calculateRemainingDays(mIdx, totalDays) {
+        const currentMonth = TODAY.getMonth();
+        if (mIdx < currentMonth) return "Ended";
+        if (mIdx > currentMonth) return `${totalDays} Days Left`;
+        const rem = totalDays - TODAY.getDate();
+        return rem <= 0 ? "Today!" : `${rem} Days Left`;
+      }
+
+      function init() {
+        const root = document.getElementById("calendarRoot");
+        root.innerHTML = "";
+        updateBackupStatus();
+
+        months.forEach((name, mIdx) => {
+          const firstDay = new Date(2026, mIdx, 1).getDay();
+          const daysInMonth = new Date(2026, mIdx + 1, 0).getDate();
+
+          let completed = 0;
+          state.habits.forEach((h) => {
+            completed += Object.keys(state.history).filter(
+              (k) =>
+                k.startsWith(`${mIdx}-`) &&
+                k.endsWith(`-${h.name}`) &&
+                state.history[k],
+            ).length;
+          });
+          const progress =
+            Math.round(
+              (completed / (state.habits.length * daysInMonth)) * 100,
+            ) || 0;
+
+          const card = document.createElement("div");
+          card.className = "month-card";
+          card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="color:var(--accent); margin:0; font-size:1.8rem;">${name}</h2>
+                <span style="background:var(--info); color:white; padding:5px 15px; border-radius:20px; font-weight:800; font-size:12px;">${calculateRemainingDays(mIdx, daysInMonth)}</span>
+            </div>
+            <div style="font-size:13px; font-weight:800; margin-top:10px; opacity:0.8">${progress}% Monthly Mastery</div>
+            <div class="progress-container"><div class="progress-fill" style="width:${progress}%"></div></div>
+            <div class="week-labels">
+              ${weekdays.map((w, i) => `<div class="week-day-label ${i === 0 || i === 6 ? "weekend" : ""}">${w}</div>`).join("")}
+            </div>
+            <div class="grid" id="grid-${mIdx}"></div>`;
+          root.appendChild(card);
+
+          const grid = document.getElementById(`grid-${mIdx}`);
+          for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div");
+            empty.className = "day-cell empty";
+            grid.appendChild(empty);
+          }
+
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dayKey = `${mIdx}-${d}`;
+            const cellDate = new Date(2026, mIdx, d);
+            const isWeekend =
+              cellDate.getDay() === 0 || cellDate.getDay() === 6;
+            const isPast =
+              cellDate < TODAY &&
+              cellDate.toDateString() !== TODAY.toDateString();
+            const isToday = cellDate.toDateString() === TODAY.toDateString();
+            const allChecked =
+              state.habits.length > 0 &&
+              state.habits.every((h) => state.history[`${dayKey}-${h.name}`]);
+
+            const cell = document.createElement("div");
+            cell.className = `day-cell ${isWeekend ? "weekend" : ""} ${allChecked ? "is-complete" : isPast ? "is-missed" : ""} ${isToday ? "is-today" : ""}`;
+
+            let habitsHtml = state.habits
+              .map((h) => {
+                const checked = state.history[`${dayKey}-${h.name}`]
+                  ? "checked"
+                  : "";
+                const disabled = !isToday && !isUnlocked ? "disabled" : "";
+                return `<label class="check-item"><input type="checkbox" ${checked} ${disabled} onchange="toggleCheck('${dayKey}','${h.name}',this)"> ${h.name}</label>`;
+              })
+              .join("");
+
+            cell.innerHTML = `<div class="day-num">${d}</div>${habitsHtml}<textarea onblur="saveNote('${dayKey}',this)" placeholder="Notes...">${state.history[dayKey + "-note"] || ""}</textarea>`;
+            grid.appendChild(cell);
+          }
+        });
+        renderHabitSettings();
+        document.getElementById("monthSelector").value = TODAY.getMonth();
+        filterMonthView();
+      }
+
+      function updateYearlyStats() {
+        document.getElementById("performanceStats").innerHTML = state.habits
+          .map((h) => {
+            const count = Object.keys(state.history).filter(
+              (k) => k.endsWith(`-${h.name}`) && state.history[k],
+            ).length;
+            return `<div class="stat-card"><strong>${h.name}</strong><div style="font-size:24px; font-weight:900; margin-top:5px; color:var(--accent)">${count} Days</div><div style="font-size:11px; opacity:0.6">Total in 2026</div></div>`;
+          })
+          .join("");
+      }
+
+      function updateMonthlyStats(mIdx) {
+        document.getElementById("performanceStats").innerHTML = state.habits
+          .map((h) => {
+            const count = Object.keys(state.history).filter(
+              (k) =>
+                k.startsWith(`${mIdx}-`) &&
+                k.endsWith(`-${h.name}`) &&
+                state.history[k],
+            ).length;
+            return `<div class="stat-card"><strong>${h.name}</strong><div style="font-size:24px; font-weight:900; margin-top:5px; color:var(--info)">${count} Days</div><div style="font-size:11px; opacity:0.6">In ${months[mIdx]}</div></div>`;
+          })
+          .join("");
+      }
+
+      function toggleCheck(k, h, el) {
+        state.history[`${k}-${h}`] = el.checked;
+        save();
+        init();
+      }
+
+      function saveNote(k, el) {
+        state.history[k + "-note"] = el.value;
+        save();
+      }
+
+      function save() {
+        localStorage.setItem("habitMaster_2026_MASTER", JSON.stringify(state));
+        const currentWeek = getWeekNumber(TODAY);
+        if (state.lastBackupWeek !== currentWeek) {
+          if (
+            confirm(
+              "New week detected! Would you like to download your weekly backup JSON?",
+            )
+          ) {
+            state.lastBackupWeek = currentWeek;
+            state.lastBackup =
+              new Date().toLocaleTimeString() + " (Wk " + currentWeek + ")";
+            localStorage.setItem(
+              "habitMaster_2026_MASTER",
+              JSON.stringify(state),
+            );
+            exportData(true);
+          } else {
+            state.lastBackupWeek = currentWeek;
+            localStorage.setItem(
+              "habitMaster_2026_MASTER",
+              JSON.stringify(state),
+            );
+          }
+        }
+      }
+
+      function updateBackupStatus() {
+        const status = document.getElementById("backupStatus");
+        status.innerText = state.lastBackup
+          ? `✓ Weekly Backup: ${state.lastBackup}`
+          : "⚠ No weekly backups created yet.";
+      }
+
+      function openSettings() {
+        document.getElementById("settingsModal").style.display = "block";
+        document.getElementById("passInput").value = state.passcode;
+      }
+
+      function closeSettings() {
+        state.passcode =
+          document.getElementById("passInput").value || state.passcode;
+        save();
+        document.getElementById("settingsModal").style.display = "none";
+        init();
+      }
+
+      function addHabit() {
+        const n = document.getElementById("newHabitName").value;
+        if (n) {
+          state.habits.push({ name: n });
+          save();
+          renderHabitSettings();
+          init();
+        }
+      }
+
+      function removeHabit(i) {
+        state.habits.splice(i, 1);
+        save();
+        renderHabitSettings();
+        init();
+      }
+
+      function renderHabitSettings() {
+        document.getElementById("habitList").innerHTML = state.habits
+          .map(
+            (h, i) =>
+              `<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--border);"><span>${h.name}</span><button onclick="removeHabit(${i})" style="color:red; border:none; background:none; cursor:pointer;">✕</button></div>`,
+          )
+          .join("");
+      }
+
+      function handleUnlock() {
+        if (prompt("Passcode:") === state.passcode) {
+          isUnlocked = !isUnlocked;
+          document.getElementById("unlockBtn").innerText = isUnlocked
+            ? "🔒 Lock History"
+            : "🔓 Unlock History";
+          init();
+        }
+      }
+
+      function toggleTheme() {
+        document.documentElement.dataset.theme =
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      }
+
+      function exportData(isAuto = false) {
+        const dataStr = JSON.stringify(state);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        const prefix = isAuto ? "WeeklyBackup" : "ManualExport";
+        a.download = `HabitMaster_2026_${prefix}.json`;
+        a.click();
+        if (!isAuto) alert("Data exported successfully!");
+      }
+
+      function importData(event) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            state = JSON.parse(e.target.result);
+            save();
+            init();
+          } catch (err) {
+            alert("Invalid File");
+          }
+        };
+        reader.readAsText(event.target.files[0]);
+      }
+
+      function resetYear() {
+        if (confirm("Erase all progress?")) {
+          state.history = {};
+          save();
+          init();
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>
