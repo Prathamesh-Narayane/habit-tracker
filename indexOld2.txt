@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Habit Mastery Pro | MASTER</title>
+    <title>2026 Habit Mastery Pro | MASTER</title>
     <style>
       :root {
         --bg: #f1f5f9;
@@ -286,8 +286,7 @@
       <header>
         <div>
           <h1 style="margin: 0; letter-spacing: -1px">
-            <span id="yearDisplay"></span> Habit Mastery
-            <span style="color: var(--accent)">PRO</span>
+            2026 Habit Mastery <span style="color: var(--accent)">PRO</span>
           </h1>
           <p
             id="systemDate"
@@ -327,7 +326,7 @@
 
       <section class="yearly-summary" id="statsSection">
         <h2 id="statsTitle" style="margin: 0 0 15px 0">
-          🏆 Yearly Performance
+          🏆 2026 Yearly Performance
         </h2>
         <div class="yearly-grid" id="performanceStats"></div>
       </section>
@@ -448,23 +447,16 @@
         "December",
       ];
       const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-      // 1. FIX: Use dynamic system date instead of hardcoded 2026
-      const TODAY = new Date();
-      const CURRENT_YEAR = TODAY.getFullYear();
-
-      // Update Header Text
-      document.getElementById("yearDisplay").innerText = CURRENT_YEAR;
+      const TODAY = new Date(2026, 0, 29);
       document.getElementById("systemDate").innerText = TODAY.toDateString();
 
-      // Update Storage Key to be year-specific (so 2025 doesn't mix with 2026)
-      const STORAGE_KEY = `habitMaster_${CURRENT_YEAR}_MASTER`;
-
       let isUnlocked = false;
-      let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      let state = JSON.parse(
+        localStorage.getItem("habitMaster_2026_MASTER"),
+      ) || {
         habits: [{ name: "Exercise" }, { name: "Coding" }],
         history: {},
-        passcode: CURRENT_YEAR.toString(), // Default pass is current year
+        passcode: "2026",
         lastBackup: null,
         lastBackupWeek: null,
       };
@@ -480,7 +472,7 @@
         });
 
         if (selected === "all") {
-          statsTitle.innerText = `🏆 ${CURRENT_YEAR} Yearly Performance`;
+          statsTitle.innerText = "🏆 2026 Yearly Performance";
           updateYearlyStats();
         } else {
           statsTitle.innerText = `📊 ${months[selected]} Performance`;
@@ -502,7 +494,7 @@
         if (mIdx < currentMonth) return "Ended";
         if (mIdx > currentMonth) return `${totalDays} Days Left`;
         const rem = totalDays - TODAY.getDate();
-        return rem < 0 ? "Ended" : rem === 0 ? "Today!" : `${rem} Days Left`;
+        return rem <= 0 ? "Today!" : `${rem} Days Left`;
       }
 
       function init() {
@@ -511,9 +503,8 @@
         updateBackupStatus();
 
         months.forEach((name, mIdx) => {
-          // 2. FIX: Generate calendar using CURRENT_YEAR
-          const firstDay = new Date(CURRENT_YEAR, mIdx, 1).getDay();
-          const daysInMonth = new Date(CURRENT_YEAR, mIdx + 1, 0).getDate();
+          const firstDay = new Date(2026, mIdx, 1).getDay();
+          const daysInMonth = new Date(2026, mIdx + 1, 0).getDate();
 
           let completed = 0;
           state.habits.forEach((h) => {
@@ -524,10 +515,10 @@
                 state.history[k],
             ).length;
           });
-          // Prevent division by zero if no habits
-          const maxPossible = state.habits.length * daysInMonth;
           const progress =
-            maxPossible > 0 ? Math.round((completed / maxPossible) * 100) : 0;
+            Math.round(
+              (completed / (state.habits.length * daysInMonth)) * 100,
+            ) || 0;
 
           const card = document.createElement("div");
           card.className = "month-card";
@@ -553,8 +544,7 @@
 
           for (let d = 1; d <= daysInMonth; d++) {
             const dayKey = `${mIdx}-${d}`;
-            // 3. FIX: Compare using CURRENT_YEAR to ensure "isToday" works correctly
-            const cellDate = new Date(CURRENT_YEAR, mIdx, d);
+            const cellDate = new Date(2026, mIdx, d);
             const isWeekend =
               cellDate.getDay() === 0 || cellDate.getDay() === 6;
             const isPast =
@@ -593,7 +583,7 @@
             const count = Object.keys(state.history).filter(
               (k) => k.endsWith(`-${h.name}`) && state.history[k],
             ).length;
-            return `<div class="stat-card"><strong>${h.name}</strong><div style="font-size:24px; font-weight:900; margin-top:5px; color:var(--accent)">${count} Days</div><div style="font-size:11px; opacity:0.6">Total in ${CURRENT_YEAR}</div></div>`;
+            return `<div class="stat-card"><strong>${h.name}</strong><div style="font-size:24px; font-weight:900; margin-top:5px; color:var(--accent)">${count} Days</div><div style="font-size:11px; opacity:0.6">Total in 2026</div></div>`;
           })
           .join("");
       }
@@ -624,7 +614,7 @@
       }
 
       function save() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem("habitMaster_2026_MASTER", JSON.stringify(state));
         const currentWeek = getWeekNumber(TODAY);
         if (state.lastBackupWeek !== currentWeek) {
           if (
@@ -635,11 +625,17 @@
             state.lastBackupWeek = currentWeek;
             state.lastBackup =
               new Date().toLocaleTimeString() + " (Wk " + currentWeek + ")";
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            localStorage.setItem(
+              "habitMaster_2026_MASTER",
+              JSON.stringify(state),
+            );
             exportData(true);
           } else {
             state.lastBackupWeek = currentWeek;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            localStorage.setItem(
+              "habitMaster_2026_MASTER",
+              JSON.stringify(state),
+            );
           }
         }
       }
@@ -674,21 +670,30 @@
         }
       }
 
+      // --- NEW FUNCTION: EDIT HABIT ---
       function editHabit(index) {
         const oldName = state.habits[index].name;
         const newName = prompt("Rename habit to:", oldName);
 
         if (newName && newName !== oldName) {
+          // 1. Update the name in the habits array
           state.habits[index].name = newName;
+
+          // 2. Migrate existing history to the new name
+          // History keys are stored as "Month-Day-HabitName"
           Object.keys(state.history).forEach((key) => {
             if (key.endsWith(`-${oldName}`)) {
               const value = state.history[key];
+              // Remove the old key
               delete state.history[key];
+              // Create the new key
               const prefix = key.substring(0, key.lastIndexOf("-"));
               const newKey = `${prefix}-${newName}`;
               state.history[newKey] = value;
             }
           });
+
+          // 3. Save and refresh
           save();
           renderHabitSettings();
           init();
@@ -740,7 +745,7 @@
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
         const prefix = isAuto ? "WeeklyBackup" : "ManualExport";
-        a.download = `HabitMaster_${CURRENT_YEAR}_${prefix}.json`;
+        a.download = `HabitMaster_2026_${prefix}.json`;
         a.click();
         if (!isAuto) alert("Data exported successfully!");
       }
